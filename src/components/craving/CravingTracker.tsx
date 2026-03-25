@@ -7,12 +7,12 @@ import { WeekNavigation } from './WeekNavigation';
 import { DayColumn } from './DayColumn';
 import { WeekStats } from './WeekStats';
 import { CravingCard } from './CravingCard';
-import { LogCravingSheet } from './LogCravingSheet';
+import { LogCravingPage } from './LogCravingPage';
 
 export function CravingTracker() {
   const { logs, addLog, deleteLog } = useCravingLogs();
   const [weekStart, setWeekStart] = useState(() => startOfWeek(new Date(), { weekStartsOn: 1 }));
-  const [sheetOpen, setSheetOpen] = useState(false);
+  const [showLogPage, setShowLogPage] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
   const weekDays = useMemo(() =>
@@ -34,16 +34,24 @@ export function CravingTracker() {
     setSelectedDate(prev => prev && isSameDay(prev, date) ? null : date);
   };
 
+  if (showLogPage) {
+    return (
+      <LogCravingPage
+        onSubmit={(log) => { addLog(log); setShowLogPage(false); }}
+        onCancel={() => setShowLogPage(false)}
+        selectedDate={selectedDate || undefined}
+      />
+    );
+  }
+
   return (
     <div className="max-w-md mx-auto px-4 py-6 space-y-5">
-      {/* Week Navigation */}
       <WeekNavigation
         currentWeekStart={weekStart}
         onPrev={() => { setWeekStart(w => addWeeks(w, -1)); setSelectedDate(null); }}
         onNext={() => { setWeekStart(w => addWeeks(w, 1)); setSelectedDate(null); }}
       />
 
-      {/* Week Grid */}
       <div className="flex gap-0.5">
         {weekDays.map(day => (
           <DayColumn
@@ -55,10 +63,8 @@ export function CravingTracker() {
         ))}
       </div>
 
-      {/* Stats */}
       <WeekStats logs={weekLogs} />
 
-      {/* Log list */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-semibold text-muted-foreground">
@@ -84,21 +90,13 @@ export function CravingTracker() {
         )}
       </div>
 
-      {/* Log Button */}
       <Button
-        onClick={() => setSheetOpen(true)}
+        onClick={() => setShowLogPage(true)}
         className="w-full rounded-2xl h-14 text-base font-semibold shadow-md shadow-primary/20 gap-2"
       >
         <Plus className="w-5 h-5" />
         Log a Craving
       </Button>
-
-      <LogCravingSheet
-        open={sheetOpen}
-        onOpenChange={setSheetOpen}
-        onSubmit={addLog}
-        selectedDate={selectedDate || undefined}
-      />
     </div>
   );
 }
