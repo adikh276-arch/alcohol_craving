@@ -84,13 +84,13 @@ export function CravingTracker() {
         )}
       </div>
 
-      {/* FAB */}
+      {/* Log Button */}
       <Button
         onClick={() => setSheetOpen(true)}
-        className="fixed bottom-6 right-6 w-14 h-14 rounded-full shadow-lg shadow-primary/25"
-        size="icon"
+        className="w-full rounded-2xl h-14 text-base font-semibold shadow-md shadow-primary/20 gap-2"
       >
-        <Plus className="w-6 h-6" />
+        <Plus className="w-5 h-5" />
+        Log a Craving
       </Button>
 
       <LogCravingSheet
