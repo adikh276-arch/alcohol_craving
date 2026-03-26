@@ -1,39 +1,58 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import type { CravingLog } from '@/types/craving';
 
-const STORAGE_KEY = 'craving-logs';
-
-function loadLogs(): CravingLog[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch {
-    return [];
-  }
-}
-
-function saveLogs(logs: CravingLog[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(logs));
-}
-
 export function useCravingLogs() {
-  const [logs, setLogs] = useState<CravingLog[]>(loadLogs);
+  const [logs, setLogs] = useState<CravingLog[]>([]);
+  const userId = sessionStorage.getItem('user_id');
 
-  const addLog = useCallback((log: Omit<CravingLog, 'id'>) => {
-    setLogs(prev => {
-      const next = [{ ...log, id: crypto.randomUUID() }, ...prev];
-      saveLogs(next);
-      return next;
-    });
-  }, []);
+  const fetchLogs = useCallback(async () => {
+    if (!userId) return;
+    try {
+      const response = await fetch('/api/craving', {
+        headers: { 'x-user-id': userId }
+      });
+      const data = await response.json();
+      setLogs(data);
+    } catch (err) {
+      console.error('Failed to fetch logs:', err);
+    }
+  }, [userId]);
 
-  const deleteLog = useCallback((id: string) => {
-    setLogs(prev => {
-      const next = prev.filter(l => l.id !== id);
-      saveLogs(next);
-      return next;
-    });
-  }, []);
+  useEffect(() => {
+    fetchLogs();
+  }, [fetchLogs]);
+
+  const addLog = useCallback(async (log: Omit<CravingLog, 'id'>) => {
+    if (!userId) return;
+    const entry = { ...log, id: crypto.randomUUID() };
+    
+    try {
+      await fetch('/api/craving', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-user-id': userId
+        },
+        body: JSON.stringify(entry)
+      });
+      setLogs((prev) => [entry, ...prev]);
+    } catch (err) {
+      console.error('Failed to add log:', err);
+    }
+  }, [userId]);
+
+  const deleteLog = useCallback(async (id: string) => {
+    if (!userId) return;
+    try {
+      await fetch(`/api/craving/${id}`, {
+        method: 'DELETE',
+        headers: { 'x-user-id': userId }
+      });
+      setLogs((prev) => prev.filter(l => l.id !== id));
+    } catch (err) {
+      console.error('Failed to delete log:', err);
+    }
+  }, [userId]);
 
   return { logs, addLog, deleteLog };
 }
