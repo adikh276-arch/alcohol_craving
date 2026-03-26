@@ -98,11 +98,22 @@ app.delete('/api/craving/:id', async (req, res) => {
   }
 });
 
+// Health check
+app.get('/api/ping', (req, res) => res.send('pong'));
+
 // Serve frontend in production
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../dist')));
+  const distPath = path.join(__dirname, '../dist');
+  
+  // Serve static files from subpath
+  app.use('/alcohol_craving', express.static(distPath));
+
+  // Root redirect and SPA fallback
   app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../dist/index.html'));
+    if (req.path === '/' || req.path === '/alcohol_craving') {
+      return res.redirect('/alcohol_craving/');
+    }
+    res.sendFile(path.join(distPath, 'index.html'));
   });
 }
 
