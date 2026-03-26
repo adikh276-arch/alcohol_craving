@@ -1,3 +1,3 @@
-# Welcome to your Lovable project
+# Alcohol Craving Tracker
 
-TODO: Document your project here
+Track and manage your alcohol cravings.

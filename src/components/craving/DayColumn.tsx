@@ -20,7 +20,7 @@ export function DayColumn({ date, logs, onSelect }: DayColumnProps) {
   const today = isToday(date);
   const count = logs.length;
   const maxIntensity = logs.length
-    ? logs.reduce((max, l) => (INTENSITY_SCORES[l.intensity] > INTENSITY_SCORES[max] ? l.intensity : max), logs[0].intensity)
+    ? (logs.reduce((max, l) => (INTENSITY_SCORES[l.intensity] > INTENSITY_SCORES[max] ? l.intensity : max), logs[0].intensity) as any)
     : null;
 
   return (

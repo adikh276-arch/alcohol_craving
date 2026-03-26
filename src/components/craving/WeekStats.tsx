@@ -1,12 +1,14 @@
 import type { CravingLog } from '@/types/craving';
 import { INTENSITY_SCORES } from '@/types/craving';
 import { Flame, Shield, TrendingUp } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface WeekStatsProps {
   logs: CravingLog[];
 }
 
 export function WeekStats({ logs }: WeekStatsProps) {
+  const { t } = useTranslation();
   const total = logs.length;
   const resisted = logs.filter(l => l.resisted).length;
   const avgIntensity = total
@@ -14,9 +16,9 @@ export function WeekStats({ logs }: WeekStatsProps) {
     : '0';
 
   const stats = [
-    { icon: Flame, label: 'Cravings', value: total, color: 'text-intensity-high' },
-    { icon: Shield, label: 'Resisted', value: resisted, color: 'text-primary' },
-    { icon: TrendingUp, label: 'Avg Level', value: avgIntensity, color: 'text-intensity-medium' },
+    { icon: Flame, label: t('cravings', { defaultValue: 'Cravings' }), value: total, color: 'text-intensity-high' },
+    { icon: Shield, label: t('resisted_stat', { defaultValue: 'Resisted' }), value: resisted, color: 'text-primary' },
+    { icon: TrendingUp, label: t('avg_level', { defaultValue: 'Avg Level' }), value: avgIntensity, color: 'text-intensity-medium' },
   ];
 
   return (

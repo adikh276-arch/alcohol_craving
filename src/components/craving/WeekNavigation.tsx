@@ -1,6 +1,7 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { format, startOfWeek, endOfWeek, isSameWeek } from 'date-fns';
+import { format, endOfWeek, isSameWeek } from 'date-fns';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from 'react-i18next';
 
 interface WeekNavigationProps {
   currentWeekStart: Date;
@@ -9,6 +10,7 @@ interface WeekNavigationProps {
 }
 
 export function WeekNavigation({ currentWeekStart, onPrev, onNext }: WeekNavigationProps) {
+  const { t } = useTranslation();
   const weekEnd = endOfWeek(currentWeekStart, { weekStartsOn: 1 });
   const isCurrentWeek = isSameWeek(currentWeekStart, new Date(), { weekStartsOn: 1 });
 
@@ -22,7 +24,7 @@ export function WeekNavigation({ currentWeekStart, onPrev, onNext }: WeekNavigat
           {format(currentWeekStart, 'MMM d')} – {format(weekEnd, 'MMM d, yyyy')}
         </p>
         {isCurrentWeek && (
-          <p className="text-xs text-primary font-medium">This Week</p>
+          <p className="text-xs text-primary font-medium">{t('this_week')}</p>
         )}
       </div>
       <Button variant="ghost" size="icon" onClick={onNext} className="rounded-full" disabled={isCurrentWeek}>

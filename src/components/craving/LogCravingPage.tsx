@@ -5,7 +5,8 @@ import { Textarea } from '@/components/ui/textarea';
 import type { CravingIntensity, CravingLog } from '@/types/craving';
 import { TRIGGERS } from '@/types/craving';
 import { cn } from '@/lib/utils';
-import { ArrowLeft, Check, X } from 'lucide-react';
+import { ArrowLeft, Check } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface LogCravingPageProps {
   onSubmit: (log: Omit<CravingLog, 'id'>) => void;
@@ -13,23 +14,24 @@ interface LogCravingPageProps {
   selectedDate?: Date;
 }
 
-const intensityOptions: { value: CravingIntensity; emoji: string; label: string; desc: string; color: string }[] = [
-  { value: 'low', emoji: '😌', label: 'Mild', desc: 'Easy to manage', color: 'border-intensity-low bg-intensity-low/10' },
-  { value: 'medium', emoji: '😐', label: 'Moderate', desc: 'Noticeable but manageable', color: 'border-intensity-medium bg-intensity-medium/10' },
-  { value: 'high', emoji: '😰', label: 'Strong', desc: 'Hard to resist', color: 'border-intensity-high bg-intensity-high/10' },
-  { value: 'severe', emoji: '🔥', label: 'Intense', desc: 'Overwhelming urge', color: 'border-intensity-severe bg-intensity-severe/10' },
-];
-
-const triggerEmojis: Record<string, string> = {
-  Stress: '😤', Social: '🍻', Boredom: '😴', Emotions: '💔',
-  Habit: '🔄', Celebration: '🎉', Loneliness: '😔', Other: '❓',
-};
-
 export function LogCravingPage({ onSubmit, onCancel, selectedDate }: LogCravingPageProps) {
+  const { t } = useTranslation();
   const [intensity, setIntensity] = useState<CravingIntensity | null>(null);
   const [trigger, setTrigger] = useState<string>('');
   const [notes, setNotes] = useState('');
   const [resisted, setResisted] = useState<boolean | null>(null);
+
+  const intensityOptions: { value: CravingIntensity; emoji: string; label: string; desc: string; color: string }[] = [
+    { value: 'low', emoji: '😌', label: t('mild'), desc: t('easy_to_manage'), color: 'border-intensity-low bg-intensity-low/10' },
+    { value: 'medium', emoji: '😐', label: t('moderate'), desc: t('noticeable_but_manageable'), color: 'border-intensity-medium bg-intensity-medium/10' },
+    { value: 'high', emoji: '😰', label: t('strong'), desc: t('hard_to_resist'), color: 'border-intensity-high bg-intensity-high/10' },
+    { value: 'severe', emoji: '🔥', label: t('intense'), desc: t('overwhelming_urge'), color: 'border-intensity-severe bg-intensity-severe/10' },
+  ];
+
+  const triggerEmojis: Record<string, string> = {
+    Stress: '😤', Social: '🍻', Boredom: '😴', Emotions: '💔',
+    Habit: '🔄', Celebration: '🎉', Loneliness: '😔', Other: '❓',
+  };
 
   const canSubmit = intensity !== null && resisted !== null;
 
@@ -51,10 +53,10 @@ export function LogCravingPage({ onSubmit, onCancel, selectedDate }: LogCravingP
         <div className="max-w-md mx-auto flex items-center justify-between px-4 h-14">
           <button onClick={onCancel} className="flex items-center gap-1 text-muted-foreground text-sm font-medium">
             <ArrowLeft className="w-4 h-4" />
-            Back
+            {t('back')}
           </button>
           <span className="text-sm font-semibold text-foreground">
-            {selectedDate ? format(selectedDate, 'EEEE, MMM d') : 'Right now'}
+            {selectedDate ? format(selectedDate, 'EEEE, MMM d') : t('right_now')}
           </span>
           <div className="w-12" />
         </div>
@@ -64,8 +66,8 @@ export function LogCravingPage({ onSubmit, onCancel, selectedDate }: LogCravingP
         {/* Step 1 — Intensity */}
         <section className="space-y-3">
           <div>
-            <h2 className="text-lg font-bold text-foreground">How strong is it?</h2>
-            <p className="text-sm text-muted-foreground">Tap the one that matches best</p>
+            <h2 className="text-lg font-bold text-foreground">{t('how_strong_is_it')}</h2>
+            <p className="text-sm text-muted-foreground">{t('tap_one_that_matches')}</p>
           </div>
           <div className="grid grid-cols-2 gap-3">
             {intensityOptions.map(opt => (
@@ -92,8 +94,8 @@ export function LogCravingPage({ onSubmit, onCancel, selectedDate }: LogCravingP
         {/* Step 2 — Did you resist? */}
         <section className="space-y-3">
           <div>
-            <h2 className="text-lg font-bold text-foreground">Did you give in?</h2>
-            <p className="text-sm text-muted-foreground">Be honest — no judgement here</p>
+            <h2 className="text-lg font-bold text-foreground">{t('did_you_give_in')}</h2>
+            <p className="text-sm text-muted-foreground">{t('be_honest')}</p>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <button
@@ -106,8 +108,8 @@ export function LogCravingPage({ onSubmit, onCancel, selectedDate }: LogCravingP
               )}
             >
               <span className="text-3xl">💪</span>
-              <p className="text-sm font-semibold text-foreground">I resisted</p>
-              <p className="text-[11px] text-muted-foreground">Stayed strong</p>
+              <p className="text-sm font-semibold text-foreground">{t('i_resisted')}</p>
+              <p className="text-[11px] text-muted-foreground">{t('stayed_strong')}</p>
             </button>
             <button
               onClick={() => setResisted(false)}
@@ -119,8 +121,8 @@ export function LogCravingPage({ onSubmit, onCancel, selectedDate }: LogCravingP
               )}
             >
               <span className="text-3xl">🫣</span>
-              <p className="text-sm font-semibold text-foreground">I gave in</p>
-              <p className="text-[11px] text-muted-foreground">It's okay, keep going</p>
+              <p className="text-sm font-semibold text-foreground">{t('i_gave_in')}</p>
+              <p className="text-[11px] text-muted-foreground">{t('keep_going')}</p>
             </button>
           </div>
         </section>
@@ -128,23 +130,23 @@ export function LogCravingPage({ onSubmit, onCancel, selectedDate }: LogCravingP
         {/* Step 3 — Trigger */}
         <section className="space-y-3">
           <div>
-            <h2 className="text-lg font-bold text-foreground">What set it off?</h2>
-            <p className="text-sm text-muted-foreground">Optional — pick one if you know</p>
+            <h2 className="text-lg font-bold text-foreground">{t('what_set_it_off')}</h2>
+            <p className="text-sm text-muted-foreground">{t('optional_pick_one')}</p>
           </div>
           <div className="grid grid-cols-2 gap-2">
-            {TRIGGERS.map(t => (
+            {TRIGGERS.map(tr => (
               <button
-                key={t}
-                onClick={() => setTrigger(trigger === t ? '' : t)}
+                key={tr}
+                onClick={() => setTrigger(trigger === tr ? '' : tr)}
                 className={cn(
                   "flex items-center gap-2 px-4 py-3 rounded-xl border transition-all text-left",
-                  trigger === t
+                  trigger === tr
                     ? "border-primary bg-primary/5 text-foreground"
                     : "border-border/50 bg-card text-muted-foreground hover:border-border"
                 )}
               >
-                <span className="text-lg">{triggerEmojis[t]}</span>
-                <span className="text-sm font-medium">{t}</span>
+                <span className="text-lg">{triggerEmojis[tr]}</span>
+                <span className="text-sm font-medium">{t(tr.toLowerCase() as any, { defaultValue: tr })}</span>
               </button>
             ))}
           </div>
@@ -153,13 +155,13 @@ export function LogCravingPage({ onSubmit, onCancel, selectedDate }: LogCravingP
         {/* Step 4 — Notes */}
         <section className="space-y-3">
           <div>
-            <h2 className="text-lg font-bold text-foreground">Anything else?</h2>
-            <p className="text-sm text-muted-foreground">Optional — jot down how you felt</p>
+            <h2 className="text-lg font-bold text-foreground">{t('anything_else')}</h2>
+            <p className="text-sm text-muted-foreground">{t('optional_jot_down')}</p>
           </div>
           <Textarea
             value={notes}
             onChange={e => setNotes(e.target.value)}
-            placeholder="I was feeling..."
+            placeholder={t('feeling_placeholder')}
             className="resize-none rounded-2xl bg-card border-border/50 focus-visible:ring-primary/30 min-h-[80px]"
             rows={3}
           />
@@ -175,7 +177,7 @@ export function LogCravingPage({ onSubmit, onCancel, selectedDate }: LogCravingP
             className="w-full rounded-2xl h-14 text-base font-semibold gap-2"
           >
             <Check className="w-5 h-5" />
-            Save Entry
+            {t('save_entry')}
           </Button>
         </div>
       </div>
