@@ -19,6 +19,7 @@ const App = () => (
         <AuthHandshake />
         <Routes>
           <Route path="/" element={<AuthGuard><Index /></AuthGuard>} />
+          <Route path="/token" element={<AuthGuard><Index /></AuthGuard>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
