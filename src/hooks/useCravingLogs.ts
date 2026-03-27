@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import type { CravingLog } from '@/types/craving';
+import { apiFetch } from '@/lib/api';
 
 export function useCravingLogs() {
   const [logs, setLogs] = useState<CravingLog[]>([]);
@@ -8,7 +9,7 @@ export function useCravingLogs() {
   const fetchLogs = useCallback(async () => {
     if (!userId) return;
     try {
-      const response = await fetch('/api/craving', {
+      const response = await apiFetch('/api/craving', {
         headers: { 'x-user-id': userId }
       });
       const data = await response.json();
@@ -27,7 +28,7 @@ export function useCravingLogs() {
     const entry = { ...log, id: crypto.randomUUID() };
     
     try {
-      await fetch('/api/craving', {
+      await apiFetch('/api/craving', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -44,7 +45,7 @@ export function useCravingLogs() {
   const deleteLog = useCallback(async (id: string) => {
     if (!userId) return;
     try {
-      await fetch(`/api/craving/${id}`, {
+      await apiFetch(`/api/craving/${id}`, {
         method: 'DELETE',
         headers: { 'x-user-id': userId }
       });
